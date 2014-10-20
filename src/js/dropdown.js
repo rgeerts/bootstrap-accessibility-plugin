@@ -1,33 +1,38 @@
   // DROPDOWN Extension
   // ===============================
-  
-  var toggle   = '[data-toggle=dropdown]'
-      , $par
-      , firstItem
-      , focusDelay = 200
-      , menus = $(toggle).parent().find('ul').attr('role','menu')
-      , lis = menus.find('li').attr('role','presentation')
 
-    lis.find('a').attr({'role':'menuitem', 'tabIndex':'-1'})
-    $(toggle).attr({ 'aria-haspopup':'true', 'aria-expanded': 'false'})
+  var toggle   = '[data-toggle=dropdown]';
+  executables.push(
+      function() {
+          var $par
+              , firstItem
+              , focusDelay = 200
+              , menus = $(toggle).parent().find('ul').attr('role', 'menu')
+              , lis = menus.find('li').attr('role', 'presentation')
 
-    $(toggle).parent().on('shown.bs.dropdown',function(e){
-      $par = $(this)
-      var $toggle = $par.find(toggle)
-      $toggle.attr('aria-expanded','true')
+          lis.find('a').attr({'role': 'menuitem', 'tabIndex': '-1'})
+          $(toggle).attr({ 'aria-haspopup': 'true', 'aria-expanded': 'false'})
 
-      setTimeout(function(){
-            firstItem = $('.dropdown-menu [role=menuitem]:visible', $par)[0]
-            try{ firstItem.focus()} catch(ex) {}
-      }, focusDelay)
-    })
+          $(toggle).parent().on('shown.bs.dropdown', function (e) {
+              $par = $(this)
+              var $toggle = $par.find(toggle)
+              $toggle.attr('aria-expanded', 'true')
 
-    $(toggle).parent().on('hidden.bs.dropdown',function(e){
-      $par = $(this)
-      var $toggle = $par.find(toggle)
-      $toggle.attr('aria-expanded','false')
-    })
+              setTimeout(function () {
+                  firstItem = $('.dropdown-menu [role=menuitem]:visible', $par)[0]
+                  try {
+                      firstItem.focus()
+                  } catch (ex) {
+                  }
+              }, focusDelay)
+          })
 
+          $(toggle).parent().on('hidden.bs.dropdown', function (e) {
+              $par = $(this)
+              var $toggle = $par.find(toggle)
+              $toggle.attr('aria-expanded', 'false')
+          })
+      });
     //Adding Space Key Behaviour, opens on spacebar
     $.fn.dropdown.Constructor.prototype.keydown = function (e) {
       var  $par

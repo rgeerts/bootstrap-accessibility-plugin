@@ -1,5 +1,5 @@
 <img src="images/logo/logo_347x50_PPa11y.png" alt="PayPal accessibility logo">
-# Bootstrap Accessibility Plugin, v1.0
+# Bootstrap Accessibility Plugin, v1.0, Modified for AMD
 ## by the PayPal Accessibility Team
 See the [Authors](#authors) section below for more information.
 
@@ -20,10 +20,16 @@ If you use Bootstrap library (version 3.x) on your website, your pages will now 
    <link rel="stylesheet" href="/css/bootstrap.min.css">
    <link rel="stylesheet" href="/css/bootstrap-accessibility.css">
 
-   <script src="http://code.jquery.com/jquery.js"></script>
-   <script src="/js/bootstrap.min.js"></script>
-   <script src="/js/bootstrap-accessibility.min.js"></script>
+  ```requirejs.config
+  make sure to setup jquery, bootstrap, and bootstrap-accessibility
+
+  ```js
+   var bsa = require(['bootstrap-accessibility'], function(){
+   bsa.invoke();
+   }
+   );
   ```
+
 6. You can also install it from npm or bower:
 
   ```sh

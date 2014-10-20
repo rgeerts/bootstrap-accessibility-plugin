@@ -18,7 +18,7 @@
 * ======================================================================== */
   
  
- (function($) { 
+ define(['require','jquery', 'bootstrap'], function (require,$){ 
   "use strict"; 
 
   // GENERAL UTILITY FUNCTIONS
@@ -26,28 +26,39 @@
   
   var uniqueId = function(prefix) {
       return (prefix || 'ui-id') + '-' + Math.floor((Math.random()*1000)+1)
-  }
+  };
 
   
   var removeMultiValAttributes = function (el, attr, val) {
    var describedby = (el.attr( attr ) || "").split( /\s+/ )
-      , index = $.inArray(val, describedby)
+      , index = $.inArray(val, describedby);
    if ( index !== -1 ) {
      describedby.splice( index, 1 )
    }
-   describedby = $.trim( describedby.join( " " ) )
+   describedby = $.trim( describedby.join( " " ) );
    if (describedby ) {
      el.attr( attr, describedby )
    } else {
     el.removeAttr( attr )
    }
-  }
+  };
+
+  var executables = [];
+  var main = {};
+  main.invoke = function () {
+      $.each(executables, function(i,ex){
+        ex();
+    });
+  };
+
+
 // Alert Extension
 // ===============================
-
-$('.alert').attr('role', 'alert')
-$('.close').removeAttr('aria-hidden').wrapInner('<span aria-hidden="true"></span>').append('<span class="sr-only">Close</span>')
-
+executables.push(
+function() {
+    $('.alert').attr('role', 'alert')
+    $('.close').removeAttr('aria-hidden').wrapInner('<span aria-hidden="true"></span>').append('<span class="sr-only">Close</span>')
+});
   // TOOLTIP Extension
   // ===============================
   
@@ -89,45 +100,51 @@ $('.close').removeAttr('aria-hidden').wrapInner('<span aria-hidden="true"></span
 
   // Modal Extension
   // ===============================
-
-	$('.modal-dialog').attr( {'role' : 'document'})
+  executables.push(
+      function() {
+          $('.modal-dialog').attr({'role': 'document'})
+      });
     var modalhide =   $.fn.modal.Constructor.prototype.hide
     $.fn.modal.Constructor.prototype.hide = function(){
        var modalOpener = this.$element.parent().find('[data-target="#' + this.$element.attr('id') + '"]')
        modalhide.apply(this, arguments)
-       console.log('modalOpener' , modalOpener)
        modalOpener.focus()
     }
   // DROPDOWN Extension
   // ===============================
-  
-  var toggle   = '[data-toggle=dropdown]'
-      , $par
-      , firstItem
-      , focusDelay = 200
-      , menus = $(toggle).parent().find('ul').attr('role','menu')
-      , lis = menus.find('li').attr('role','presentation')
 
-    lis.find('a').attr({'role':'menuitem', 'tabIndex':'-1'})
-    $(toggle).attr({ 'aria-haspopup':'true', 'aria-expanded': 'false'})
+  var toggle   = '[data-toggle=dropdown]';
+  executables.push(
+      function() {
+          var $par
+              , firstItem
+              , focusDelay = 200
+              , menus = $(toggle).parent().find('ul').attr('role', 'menu')
+              , lis = menus.find('li').attr('role', 'presentation')
 
-    $(toggle).parent().on('shown.bs.dropdown',function(e){
-      $par = $(this)
-      var $toggle = $par.find(toggle)
-      $toggle.attr('aria-expanded','true')
+          lis.find('a').attr({'role': 'menuitem', 'tabIndex': '-1'})
+          $(toggle).attr({ 'aria-haspopup': 'true', 'aria-expanded': 'false'})
 
-      setTimeout(function(){
-            firstItem = $('.dropdown-menu [role=menuitem]:visible', $par)[0]
-            try{ firstItem.focus()} catch(ex) {}
-      }, focusDelay)
-    })
+          $(toggle).parent().on('shown.bs.dropdown', function (e) {
+              $par = $(this)
+              var $toggle = $par.find(toggle)
+              $toggle.attr('aria-expanded', 'true')
 
-    $(toggle).parent().on('hidden.bs.dropdown',function(e){
-      $par = $(this)
-      var $toggle = $par.find(toggle)
-      $toggle.attr('aria-expanded','false')
-    })
+              setTimeout(function () {
+                  firstItem = $('.dropdown-menu [role=menuitem]:visible', $par)[0]
+                  try {
+                      firstItem.focus()
+                  } catch (ex) {
+                  }
+              }, focusDelay)
+          })
 
+          $(toggle).parent().on('hidden.bs.dropdown', function (e) {
+              $par = $(this)
+              var $toggle = $par.find(toggle)
+              $toggle.attr('aria-expanded', 'false')
+          })
+      });
     //Adding Space Key Behaviour, opens on spacebar
     $.fn.dropdown.Constructor.prototype.keydown = function (e) {
       var  $par
@@ -152,31 +169,32 @@ $('.close').removeAttr('aria-hidden').wrapInner('<span aria-hidden="true"></span
       .on('keydown.bs.dropdown.data-api', toggle + ', [role=menu]' , $.fn.dropdown.Constructor.prototype.keydown)
   // Tab Extension
   // ===============================
-  
-  var $tablist = $('.nav-tabs, .nav-pills')
-        , $lis = $tablist.children('li')
-        , $tabs = $tablist.find('[data-toggle="tab"], [data-toggle="pill"]')
+  executables.push(
+      function() {
+          var $tablist = $('.nav-tabs, .nav-pills')
+              , $lis = $tablist.children('li')
+              , $tabs = $tablist.find('[data-toggle="tab"], [data-toggle="pill"]')
 
-    $tablist.attr('role', 'tablist')
-    $lis.attr('role', 'presentation')
-    $tabs.attr('role', 'tab')
+          $tablist.attr('role', 'tablist')
+          $lis.attr('role', 'presentation')
+          $tabs.attr('role', 'tab')
 
-    $tabs.each(function( index ) {
-      var tabpanel = $($(this).attr('href'))
-        , tab = $(this)
-        , tabid = tab.attr('id') || uniqueId('ui-tab')
+          $tabs.each(function (index) {
+              var tabpanel = $($(this).attr('href'))
+                  , tab = $(this)
+                  , tabid = tab.attr('id') || uniqueId('ui-tab')
 
-        tab.attr('id', tabid)
+              tab.attr('id', tabid)
 
-      if(tab.parent().hasClass('active')){
-        tab.attr( { 'tabIndex' : '0', 'aria-selected' : 'true', 'aria-controls': tab.attr('href').substr(1) } )
-        tabpanel.attr({ 'role' : 'tabpanel', 'tabIndex' : '0', 'aria-hidden' : 'false', 'aria-labelledby':tabid })
-      }else{
-        tab.attr( { 'tabIndex' : '-1', 'aria-selected' : 'false', 'aria-controls': tab.attr('href').substr(1) } )
-        tabpanel.attr( { 'role' : 'tabpanel', 'tabIndex' : '-1', 'aria-hidden' : 'true', 'aria-labelledby':tabid } )
-      }
-    })
-
+              if (tab.parent().hasClass('active')) {
+                  tab.attr({ 'tabIndex': '0', 'aria-selected': 'true', 'aria-controls': tab.attr('href').substr(1) })
+                  tabpanel.attr({ 'role': 'tabpanel', 'tabIndex': '0', 'aria-hidden': 'false', 'aria-labelledby': tabid })
+              } else {
+                  tab.attr({ 'tabIndex': '-1', 'aria-selected': 'false', 'aria-controls': tab.attr('href').substr(1) })
+                  tabpanel.attr({ 'role': 'tabpanel', 'tabIndex': '-1', 'aria-hidden': 'true', 'aria-labelledby': tabid })
+              }
+          })
+      });
     $.fn.tab.Constructor.prototype.keydown = function (e) {
       var $this = $(this)
       , $items
@@ -226,31 +244,32 @@ $('.close').removeAttr('aria-hidden').wrapInner('<span aria-hidden="true"></span
 
   // Collapse Extension
   // ===============================
+  executables.push(
+      function() {
+          var $colltabs = $('[data-toggle="collapse"]')
+          $colltabs.attr({ 'role': 'tab', 'aria-selected': 'false', 'aria-expanded': 'false' })
+          $colltabs.each(function (index) {
+              var colltab = $(this)
+                  , collpanel = (colltab.attr('data-target')) ? $(colltab.attr('data-target')) : $(colltab.attr('href'))
+                  , parent = colltab.attr('data-parent')
+                  , collparent = parent && $(parent)
+                  , collid = colltab.attr('id') || uniqueId('ui-collapse')
 
-     var $colltabs =  $('[data-toggle="collapse"]')
-      $colltabs.attr({ 'role':'tab', 'aria-selected':'false', 'aria-expanded':'false' })
-      $colltabs.each(function( index ) {
-        var colltab = $(this)
-        , collpanel = (colltab.attr('data-target')) ? $(colltab.attr('data-target')) : $(colltab.attr('href'))
-        , parent  = colltab.attr('data-parent')
-        , collparent = parent && $(parent)
-        , collid = colltab.attr('id') || uniqueId('ui-collapse')
+              $(collparent).find('div:not(.collapse,.panel-body), h4').attr('role', 'presentation')
 
-        $(collparent).find('div:not(.collapse,.panel-body), h4').attr('role','presentation')
-
-          colltab.attr('id', collid)
-          if(collparent){
-            collparent.attr({ 'role' : 'tablist', 'aria-multiselectable' : 'true' })
-            if(collpanel.hasClass('in')){
-              colltab.attr({ 'aria-controls': colltab.attr('href').substr(1), 'aria-selected':'true', 'aria-expanded':'true', 'tabindex':'0' })
-              collpanel.attr({ 'role':'tabpanel', 'tabindex':'0', 'aria-labelledby':collid, 'aria-hidden':'false' })
-            }else{
-              colltab.attr({'aria-controls' : colltab.attr('href').substr(1), 'tabindex':'-1' })
-              collpanel.attr({ 'role':'tabpanel', 'tabindex':'-1', 'aria-labelledby':collid, 'aria-hidden':'true' })
-            }
-          }
-      })
-
+              colltab.attr('id', collid)
+              if (collparent) {
+                  collparent.attr({ 'role': 'tablist', 'aria-multiselectable': 'true' })
+                  if (collpanel.hasClass('in')) {
+                      colltab.attr({ 'aria-controls': colltab.attr('href').substr(1), 'aria-selected': 'true', 'aria-expanded': 'true', 'tabindex': '0' })
+                      collpanel.attr({ 'role': 'tabpanel', 'tabindex': '0', 'aria-labelledby': collid, 'aria-hidden': 'false' })
+                  } else {
+                      colltab.attr({'aria-controls': colltab.attr('href').substr(1), 'tabindex': '-1' })
+                      collpanel.attr({ 'role': 'tabpanel', 'tabindex': '-1', 'aria-labelledby': collid, 'aria-hidden': 'true' })
+                  }
+              }
+          })
+      });
     var collToggle = $.fn.collapse.Constructor.prototype.toggle
     $.fn.collapse.Constructor.prototype.toggle = function(){
         var prevTab = this.$parent && this.$parent.find('[aria-expanded="true"]') , href
@@ -317,42 +336,43 @@ $('.close').removeAttr('aria-hidden').wrapInner('<span aria-hidden="true"></span
     
   // Carousel Extension
   // ===============================
-  
-      $('.carousel').each(function (index) {
-        var $this = $(this)
-          , prev = $this.find('[data-slide="prev"]')
-          , next = $this.find('[data-slide="next"]')
-          , $options = $this.find('.item')
-          , $listbox = $options.parent()
+  executables.push(
+      function() {
+          $('.carousel').each(function (index) {
+              var $this = $(this)
+                  , prev = $this.find('[data-slide="prev"]')
+                  , next = $this.find('[data-slide="next"]')
+                  , $options = $this.find('.item')
+                  , $listbox = $options.parent()
 
-        $this.attr( { 'data-interval' : 'false', 'data-wrap' : 'false' } )
-        $listbox.attr('role', 'listbox')
-        $options.attr('role', 'option')
+              $this.attr({ 'data-interval': 'false', 'data-wrap': 'false' })
+              $listbox.attr('role', 'listbox')
+              $options.attr('role', 'option')
 
-        var spanPrev = document.createElement('span')
-        spanPrev.setAttribute('class', 'sr-only')
-        spanPrev.innerHTML='Previous'
+              var spanPrev = document.createElement('span')
+              spanPrev.setAttribute('class', 'sr-only')
+              spanPrev.innerHTML = 'Previous'
 
-        var spanNext = document.createElement('span')
-        spanNext.setAttribute('class', 'sr-only')
-        spanNext.innerHTML='Next'
+              var spanNext = document.createElement('span')
+              spanNext.setAttribute('class', 'sr-only')
+              spanNext.innerHTML = 'Next'
 
-        prev.attr('role', 'button')
-        next.attr('role', 'button')
+              prev.attr('role', 'button')
+              next.attr('role', 'button')
 
-        prev.append(spanPrev)
-        next.append(spanNext)
+              prev.append(spanPrev)
+              next.append(spanNext)
 
-        $options.each(function () {
-          var item = $(this)
-          if(item.hasClass('active')){
-            item.attr({ 'aria-selected': 'true', 'tabindex' : '0' })
-          }else{
-            item.attr({ 'aria-selected': 'false', 'tabindex' : '-1' })
-          }
-        })
-      })
-
+              $options.each(function () {
+                  var item = $(this)
+                  if (item.hasClass('active')) {
+                      item.attr({ 'aria-selected': 'true', 'tabindex': '0' })
+                  } else {
+                      item.attr({ 'aria-selected': 'false', 'tabindex': '-1' })
+                  }
+              })
+          })
+      });
       var slideCarousel = $.fn.carousel.Constructor.prototype.slide
       $.fn.carousel.Constructor.prototype.slide = function (type, next) {
         var $active = this.$element.find('.item.active')
@@ -404,4 +424,4 @@ $('.close').removeAttr('aria-hidden').wrapInner('<span aria-hidden="true"></span
     }
     $(document).on('keydown.carousel.data-api', 'div[role=option]', $.fn.carousel.Constructor.prototype.keydown)
 
- })(jQuery);
+ return main;});

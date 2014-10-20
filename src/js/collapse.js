@@ -1,31 +1,32 @@
 
   // Collapse Extension
   // ===============================
+  executables.push(
+      function() {
+          var $colltabs = $('[data-toggle="collapse"]')
+          $colltabs.attr({ 'role': 'tab', 'aria-selected': 'false', 'aria-expanded': 'false' })
+          $colltabs.each(function (index) {
+              var colltab = $(this)
+                  , collpanel = (colltab.attr('data-target')) ? $(colltab.attr('data-target')) : $(colltab.attr('href'))
+                  , parent = colltab.attr('data-parent')
+                  , collparent = parent && $(parent)
+                  , collid = colltab.attr('id') || uniqueId('ui-collapse')
 
-     var $colltabs =  $('[data-toggle="collapse"]')
-      $colltabs.attr({ 'role':'tab', 'aria-selected':'false', 'aria-expanded':'false' })
-      $colltabs.each(function( index ) {
-        var colltab = $(this)
-        , collpanel = (colltab.attr('data-target')) ? $(colltab.attr('data-target')) : $(colltab.attr('href'))
-        , parent  = colltab.attr('data-parent')
-        , collparent = parent && $(parent)
-        , collid = colltab.attr('id') || uniqueId('ui-collapse')
+              $(collparent).find('div:not(.collapse,.panel-body), h4').attr('role', 'presentation')
 
-        $(collparent).find('div:not(.collapse,.panel-body), h4').attr('role','presentation')
-
-          colltab.attr('id', collid)
-          if(collparent){
-            collparent.attr({ 'role' : 'tablist', 'aria-multiselectable' : 'true' })
-            if(collpanel.hasClass('in')){
-              colltab.attr({ 'aria-controls': colltab.attr('href').substr(1), 'aria-selected':'true', 'aria-expanded':'true', 'tabindex':'0' })
-              collpanel.attr({ 'role':'tabpanel', 'tabindex':'0', 'aria-labelledby':collid, 'aria-hidden':'false' })
-            }else{
-              colltab.attr({'aria-controls' : colltab.attr('href').substr(1), 'tabindex':'-1' })
-              collpanel.attr({ 'role':'tabpanel', 'tabindex':'-1', 'aria-labelledby':collid, 'aria-hidden':'true' })
-            }
-          }
-      })
-
+              colltab.attr('id', collid)
+              if (collparent) {
+                  collparent.attr({ 'role': 'tablist', 'aria-multiselectable': 'true' })
+                  if (collpanel.hasClass('in')) {
+                      colltab.attr({ 'aria-controls': colltab.attr('href').substr(1), 'aria-selected': 'true', 'aria-expanded': 'true', 'tabindex': '0' })
+                      collpanel.attr({ 'role': 'tabpanel', 'tabindex': '0', 'aria-labelledby': collid, 'aria-hidden': 'false' })
+                  } else {
+                      colltab.attr({'aria-controls': colltab.attr('href').substr(1), 'tabindex': '-1' })
+                      collpanel.attr({ 'role': 'tabpanel', 'tabindex': '-1', 'aria-labelledby': collid, 'aria-hidden': 'true' })
+                  }
+              }
+          })
+      });
     var collToggle = $.fn.collapse.Constructor.prototype.toggle
     $.fn.collapse.Constructor.prototype.toggle = function(){
         var prevTab = this.$parent && this.$parent.find('[aria-expanded="true"]') , href

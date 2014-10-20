@@ -1,30 +1,31 @@
   // Tab Extension
   // ===============================
-  
-  var $tablist = $('.nav-tabs, .nav-pills')
-        , $lis = $tablist.children('li')
-        , $tabs = $tablist.find('[data-toggle="tab"], [data-toggle="pill"]')
+  executables.push(
+      function() {
+          var $tablist = $('.nav-tabs, .nav-pills')
+              , $lis = $tablist.children('li')
+              , $tabs = $tablist.find('[data-toggle="tab"], [data-toggle="pill"]')
 
-    $tablist.attr('role', 'tablist')
-    $lis.attr('role', 'presentation')
-    $tabs.attr('role', 'tab')
+          $tablist.attr('role', 'tablist')
+          $lis.attr('role', 'presentation')
+          $tabs.attr('role', 'tab')
 
-    $tabs.each(function( index ) {
-      var tabpanel = $($(this).attr('href'))
-        , tab = $(this)
-        , tabid = tab.attr('id') || uniqueId('ui-tab')
+          $tabs.each(function (index) {
+              var tabpanel = $($(this).attr('href'))
+                  , tab = $(this)
+                  , tabid = tab.attr('id') || uniqueId('ui-tab')
 
-        tab.attr('id', tabid)
+              tab.attr('id', tabid)
 
-      if(tab.parent().hasClass('active')){
-        tab.attr( { 'tabIndex' : '0', 'aria-selected' : 'true', 'aria-controls': tab.attr('href').substr(1) } )
-        tabpanel.attr({ 'role' : 'tabpanel', 'tabIndex' : '0', 'aria-hidden' : 'false', 'aria-labelledby':tabid })
-      }else{
-        tab.attr( { 'tabIndex' : '-1', 'aria-selected' : 'false', 'aria-controls': tab.attr('href').substr(1) } )
-        tabpanel.attr( { 'role' : 'tabpanel', 'tabIndex' : '-1', 'aria-hidden' : 'true', 'aria-labelledby':tabid } )
-      }
-    })
-
+              if (tab.parent().hasClass('active')) {
+                  tab.attr({ 'tabIndex': '0', 'aria-selected': 'true', 'aria-controls': tab.attr('href').substr(1) })
+                  tabpanel.attr({ 'role': 'tabpanel', 'tabIndex': '0', 'aria-hidden': 'false', 'aria-labelledby': tabid })
+              } else {
+                  tab.attr({ 'tabIndex': '-1', 'aria-selected': 'false', 'aria-controls': tab.attr('href').substr(1) })
+                  tabpanel.attr({ 'role': 'tabpanel', 'tabIndex': '-1', 'aria-hidden': 'true', 'aria-labelledby': tabid })
+              }
+          })
+      });
     $.fn.tab.Constructor.prototype.keydown = function (e) {
       var $this = $(this)
       , $items

@@ -42,10 +42,10 @@ module.exports = function(grunt) {
 
 	    concat: {
 	      options: {
-	        banner: '<%= license %>  \n \n (function($) { \n  "use strict"; \n',
+	        banner: '<%= license %>  \n \n define([\'require\',\'jquery\', \'bootstrap\'], function (require,$){ \n  "use strict"; \n',
 	        separator: '\n',
 	        stripBanners: false,
-			footer: '\n\n })(jQuery);'
+			footer: '\n\n return main;});'
 	      },
 			bootstrap: {
 				src: [

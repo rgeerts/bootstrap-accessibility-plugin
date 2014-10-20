@@ -1,41 +1,42 @@
   // Carousel Extension
   // ===============================
-  
-      $('.carousel').each(function (index) {
-        var $this = $(this)
-          , prev = $this.find('[data-slide="prev"]')
-          , next = $this.find('[data-slide="next"]')
-          , $options = $this.find('.item')
-          , $listbox = $options.parent()
+  executables.push(
+      function() {
+          $('.carousel').each(function (index) {
+              var $this = $(this)
+                  , prev = $this.find('[data-slide="prev"]')
+                  , next = $this.find('[data-slide="next"]')
+                  , $options = $this.find('.item')
+                  , $listbox = $options.parent()
 
-        $this.attr( { 'data-interval' : 'false', 'data-wrap' : 'false' } )
-        $listbox.attr('role', 'listbox')
-        $options.attr('role', 'option')
+              $this.attr({ 'data-interval': 'false', 'data-wrap': 'false' })
+              $listbox.attr('role', 'listbox')
+              $options.attr('role', 'option')
 
-        var spanPrev = document.createElement('span')
-        spanPrev.setAttribute('class', 'sr-only')
-        spanPrev.innerHTML='Previous'
+              var spanPrev = document.createElement('span')
+              spanPrev.setAttribute('class', 'sr-only')
+              spanPrev.innerHTML = 'Previous'
 
-        var spanNext = document.createElement('span')
-        spanNext.setAttribute('class', 'sr-only')
-        spanNext.innerHTML='Next'
+              var spanNext = document.createElement('span')
+              spanNext.setAttribute('class', 'sr-only')
+              spanNext.innerHTML = 'Next'
 
-        prev.attr('role', 'button')
-        next.attr('role', 'button')
+              prev.attr('role', 'button')
+              next.attr('role', 'button')
 
-        prev.append(spanPrev)
-        next.append(spanNext)
+              prev.append(spanPrev)
+              next.append(spanNext)
 
-        $options.each(function () {
-          var item = $(this)
-          if(item.hasClass('active')){
-            item.attr({ 'aria-selected': 'true', 'tabindex' : '0' })
-          }else{
-            item.attr({ 'aria-selected': 'false', 'tabindex' : '-1' })
-          }
-        })
-      })
-
+              $options.each(function () {
+                  var item = $(this)
+                  if (item.hasClass('active')) {
+                      item.attr({ 'aria-selected': 'true', 'tabindex': '0' })
+                  } else {
+                      item.attr({ 'aria-selected': 'false', 'tabindex': '-1' })
+                  }
+              })
+          })
+      });
       var slideCarousel = $.fn.carousel.Constructor.prototype.slide
       $.fn.carousel.Constructor.prototype.slide = function (type, next) {
         var $active = this.$element.find('.item.active')

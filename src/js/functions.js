@@ -4,19 +4,28 @@
   
   var uniqueId = function(prefix) {
       return (prefix || 'ui-id') + '-' + Math.floor((Math.random()*1000)+1)
-  }
+  };
 
   
   var removeMultiValAttributes = function (el, attr, val) {
    var describedby = (el.attr( attr ) || "").split( /\s+/ )
-      , index = $.inArray(val, describedby)
+      , index = $.inArray(val, describedby);
    if ( index !== -1 ) {
      describedby.splice( index, 1 )
    }
-   describedby = $.trim( describedby.join( " " ) )
+   describedby = $.trim( describedby.join( " " ) );
    if (describedby ) {
      el.attr( attr, describedby )
    } else {
     el.removeAttr( attr )
    }
-  }
+  };
+
+  var executables = [];
+  var main = {};
+  main.invoke = function () {
+      $.each(executables, function(i,ex){
+        ex();
+    });
+  };
+
