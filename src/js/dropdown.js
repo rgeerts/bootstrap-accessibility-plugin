@@ -31,6 +31,7 @@
               $par = $(this)
               var $toggle = $par.find(toggle)
               $toggle.attr('aria-expanded', 'false')
+              $toggle.focus();
           })
       });
     //Adding Space Key Behaviour, opens on spacebar
