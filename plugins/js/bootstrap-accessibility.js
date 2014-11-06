@@ -143,6 +143,7 @@ function() {
               $par = $(this)
               var $toggle = $par.find(toggle)
               $toggle.attr('aria-expanded', 'false')
+              $toggle.focus();
           })
       });
     //Adding Space Key Behaviour, opens on spacebar
@@ -167,6 +168,7 @@ function() {
         }, 150)
        })
       .on('keydown.bs.dropdown.data-api', toggle + ', [role=menu]' , $.fn.dropdown.Constructor.prototype.keydown)
+
   // Tab Extension
   // ===============================
   executables.push(
